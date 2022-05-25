@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppHeader @buttonClicked="searching($event)" />
-    <AppMain :moviesList="moviesList" />
+    <AppMain :moviesList="moviesList" :seriesList="seriesList" />
   </div>
 </template>
 
@@ -15,28 +15,29 @@ export default {
   data() {
     return {
       moviesList: [],
+      seriesList: [],
     };
   },
   methods: {
     searching(searchKey) {
-      axios
-        .get("https://api.themoviedb.org/3/search/movie", {
-          params: {
-            api_key: "15bbfb8536d9947b1429836f467bce3f",
-            query: searchKey,
-          },
-        })
-        .then((resp) => {
-          resp.data.results.forEach((item) => {
-            const movieObj = {
-              title: item.title,
-              ogTitle: item.original_title,
-              language: item.original_language,
-              score: parseInt(item.vote_average) / 2,
-            };
-            this.moviesList.push(movieObj);
-          });
-        });
+      const options = {
+        params: {
+          api_key: "15bbfb8536d9947b1429836f467bce3f",
+          query: searchKey,
+        },
+      };
+      const reqMovies = axios.get(
+        "https://api.themoviedb.org/3/search/movie",
+        options
+      );
+      const reqSeries = axios.get(
+        "https://api.themoviedb.org/3/search/tv",
+        options
+      );
+      axios.all([reqMovies, reqSeries]).then((resp) => {
+        this.moviesList = resp[0].data.results;
+        this.seriesList = resp[1].data.results;
+      });
     },
   },
 };
