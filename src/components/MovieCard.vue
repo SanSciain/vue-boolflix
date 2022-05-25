@@ -27,14 +27,14 @@
         <span v-else>{{ lang }}</span>
       </div>
       <p><b>Voto</b>:{{ item.vote_average }}</p>
-      <!-- <div class="stars">
-        <span v-for="(n, index) in starVote" :key="index"
-          ><font-awesome-icon icon="fa-solid fa-star" class="yellowStars"
-        /></span>
-        <span v-for="(n, index) in 5 - starVote" :key="index + 5"
-          ><font-awesome-icon icon="fa-solid fa-star"
-        /></span>
-      </div> -->
+      <div class="stars">
+        <span v-for="(n, index) in starVote" :key="index">
+          <font-awesome-icon icon="fa-solid fa-star" class="yellowStars" />
+        </span>
+        <span v-for="(n, index) in 5 - starVote" :key="index + 5">
+          <font-awesome-icon icon="fa-solid fa-star" />
+        </span>
+      </div>
       <div class="overview">
         {{ item.overview }}
       </div>
@@ -43,7 +43,14 @@
 </template>
 
 <script>
-// import FontAwesomeIcon from "../../node_modules/@fortawesome/fontawesome-free";
+import Vue from "vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faStar);
+
+Vue.component("font-awesome-icon", FontAwesomeIcon);
 export default {
   name: "MovieCard",
   // components: {
