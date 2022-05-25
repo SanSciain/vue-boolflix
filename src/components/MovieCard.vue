@@ -26,7 +26,7 @@
         />
         <span v-else>{{ lang }}</span>
       </div>
-      <p><b>Voto</b>:{{ item.vote_average }}</p>
+      <span><b>Voto</b>:</span>
       <div class="stars">
         <span v-for="(n, index) in starVote" :key="index">
           <font-awesome-icon icon="fa-solid fa-star" class="yellowStars" />
@@ -113,6 +113,7 @@ export default {
     }
 
     .stars {
+      display: inline;
       .yellowStars {
         color: yellow;
       }
