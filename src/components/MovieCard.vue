@@ -38,6 +38,11 @@
       <div class="overview">
         {{ item.overview }}
       </div>
+      <div class="cast">
+        <span v-for="(actor, index) in fiveActors" :key="index"
+          >{{ actor }},
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -47,21 +52,18 @@ import Vue from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-
 library.add(faStar);
-
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+import axios from "axios";
 export default {
   name: "MovieCard",
-  // components: {
-  //   FontAwesomeIcon,
-  // },
   data() {
     return {
       lang: this.item.original_language,
       flag: true,
       defaultUrl: "https://image.tmdb.org/t/p/w342/",
       starVote: Math.ceil(this.item.vote_average / 2),
+      fiveActors: [],
     };
   },
   props: {
@@ -75,6 +77,58 @@ export default {
         this.flag = false;
       }
     },
+  },
+  mounted: function () {
+    const option = {
+      params: { api_key: "15bbfb8536d9947b1429836f467bce3f" },
+    };
+    // let req;
+    // if (
+    //   axios.get(
+    //     `https://api.themoviedb.org/3/movie/${this.item.id}/credits`,
+    //     option
+    //   )
+    // ) {
+    //   req = axios.get(
+    //     `https://api.themoviedb.org/3/movie/${this.item.id}/credits`,
+    //     option
+    //   );
+    // } else {
+    //   req = axios.get(
+    //     `https://api.themoviedb.org/3/tv/${this.item.id}/credits`,
+    //     option
+    //   );
+    // }
+    // axios.all([req]).then((resp) => {
+    //   const castList = resp[0].data.cast;
+    //   for (let i = 0; i < 5; i++) {
+    //     this.fiveActors.push(castList[i].name);
+    //   }
+    // });
+
+    axios
+      .get(`https://api.themoviedb.org/3/movie/${this.item.id}/credits`, option)
+      .then((resp) => {
+        const castList = resp.data.cast;
+        for (let i = 0; i < 5; i++) {
+          this.fiveActors.push(castList[i].name);
+        }
+      })
+      .catch((err) => {
+        if (err.code === "ERR_BAD_REQUEST") {
+          axios
+            .get(
+              `https://api.themoviedb.org/3/tv/${this.item.id}/credits`,
+              option
+            )
+            .then((resp) => {
+              const castList = resp.data.cast;
+              for (let i = 0; i < 5 && i < castList.lenght; i++) {
+                this.fiveActors.push(castList[i].name);
+              }
+            });
+        }
+      });
   },
 };
 </script>
@@ -92,7 +146,6 @@ export default {
     height: 100%;
 
     img {
-      object-fit: cover;
       height: 100%;
     }
   }
@@ -122,6 +175,11 @@ export default {
     .overview {
       overflow: auto;
       height: 30%;
+      margin: 0.5rem 0;
+    }
+
+    .cast {
+      margin-bottom: 0.5rem;
     }
   }
 }
