@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <AppHeader @buttonClicked="searching($event)" />
-    <AppMain :moviesList="moviesList" :seriesList="seriesList" />
+    <AppMain
+      :moviesList="moviesList"
+      :seriesList="seriesList"
+      :status="status"
+    />
   </div>
 </template>
 
@@ -16,6 +20,7 @@ export default {
     return {
       moviesList: [],
       seriesList: [],
+      status: [],
     };
   },
   methods: {
@@ -37,6 +42,8 @@ export default {
       axios.all([reqMovies, reqSeries]).then((resp) => {
         this.moviesList = resp[0].data.results;
         this.seriesList = resp[1].data.results;
+        this.status.push(resp[0].status);
+        this.status.push(resp[1].status);
       });
     },
   },

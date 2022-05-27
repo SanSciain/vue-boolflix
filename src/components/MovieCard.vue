@@ -36,12 +36,14 @@
         </span>
       </div>
       <div class="overview">
+        <p><b>Trama</b>:</p>
         {{ item.overview }}
       </div>
       <div class="cast">
-        <span v-for="(actor, index) in fiveActors" :key="index"
-          >{{ actor }},
-        </span>
+        <p><b>Cast</b>:</p>
+        <ul>
+          <li v-for="(actor, index) in fiveActors" :key="index">{{ actor }}</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -68,6 +70,8 @@ export default {
   },
   props: {
     item: Object,
+    stat: Number,
+    type: String,
   },
   methods: {
     languageNotFound() {
@@ -78,55 +82,19 @@ export default {
       }
     },
   },
-  mounted: function () {
+  mounted: async function () {
     const option = {
       params: { api_key: "15bbfb8536d9947b1429836f467bce3f" },
     };
-    // let req;
-    // if (
-    //   axios.get(
-    //     `https://api.themoviedb.org/3/movie/${this.item.id}/credits`,
-    //     option
-    //   )
-    // ) {
-    //   req = axios.get(
-    //     `https://api.themoviedb.org/3/movie/${this.item.id}/credits`,
-    //     option
-    //   );
-    // } else {
-    //   req = axios.get(
-    //     `https://api.themoviedb.org/3/tv/${this.item.id}/credits`,
-    //     option
-    //   );
-    // }
-    // axios.all([req]).then((resp) => {
-    //   const castList = resp[0].data.cast;
-    //   for (let i = 0; i < 5; i++) {
-    //     this.fiveActors.push(castList[i].name);
-    //   }
-    // });
-
     axios
-      .get(`https://api.themoviedb.org/3/movie/${this.item.id}/credits`, option)
+      .get(
+        `https://api.themoviedb.org/3/${this.type}/${this.item.id}/credits`,
+        option
+      )
       .then((resp) => {
         const castList = resp.data.cast;
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < Math.min(5, castList.length); i++) {
           this.fiveActors.push(castList[i].name);
-        }
-      })
-      .catch((err) => {
-        if (err.code === "ERR_BAD_REQUEST") {
-          axios
-            .get(
-              `https://api.themoviedb.org/3/tv/${this.item.id}/credits`,
-              option
-            )
-            .then((resp) => {
-              const castList = resp.data.cast;
-              for (let i = 0; i < 5 && i < castList.lenght; i++) {
-                this.fiveActors.push(castList[i].name);
-              }
-            });
         }
       });
   },
@@ -180,6 +148,8 @@ export default {
 
     .cast {
       margin-bottom: 0.5rem;
+      overflow: auto;
+      height: 20%;
     }
   }
 }

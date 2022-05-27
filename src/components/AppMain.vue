@@ -5,6 +5,8 @@
         v-for="(movieItem, index) in moviesList"
         :key="index"
         :item="movieItem"
+        :stat="status[0]"
+        :type="'movie'"
       />
     </div>
     <div class="container movies">
@@ -12,6 +14,8 @@
         v-for="(seriesItem, index) in seriesList"
         :key="index"
         :item="seriesItem"
+        :stat="status[1]"
+        :type="'tv'"
       />
     </div>
   </main>
@@ -24,6 +28,7 @@ export default {
   props: {
     moviesList: Array,
     seriesList: Array,
+    status: Array,
   },
   components: { MovieCard },
 };
